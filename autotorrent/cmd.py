@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import shutil
+import time
 
 from six.moves import configparser, input
 
@@ -55,7 +56,8 @@ def commandline_handler():
     parser.add_argument("-a", "--addfile", dest="addfile", default=False, help='Add a new torrent file to client', nargs='+')
     parser.add_argument("-d", "--delete_torrents", action="store_true", dest="delete_torrents", default=False, help='Delete torrents when they are added to the client')
     parser.add_argument("--verbose", help="increase output verbosity", action="store_true", dest="verbose")
-    parser.add_argument("-o", "--loopmode", dest="loopmode", default=False, help='Enable loop mode (scan directory for torrents every few seconds)', nargs='*')
+    parser.add_argument("-o", "--loopmode", dest="loopmode", default=False, help='Enable loop mode (scan directory '
+                                                                                 'for torrents every few seconds)', nargs='?')
 
     args = parser.parse_args()
     
@@ -126,7 +128,8 @@ def commandline_handler():
     
     if not os.path.isfile(args.config_file):
         parser.error("Config file not found %r" % args.config_file)
-    
+
+    print('Using config file %s' % args.config_file)
     config = configparser.ConfigParser()
     config.read(args.config_file)
     
@@ -203,40 +206,46 @@ def commandline_handler():
             print('Database rebuilt')
 
     if args.addfile:
-        dry_run = bool(args.dry_run)
-        dry_run_data = []
-        
-        print('Found %s torrent(s)' % len(args.addfile))
-        if not dry_run:
-            at.populate_torrents_seeded()
-        
-        for torrent in args.addfile:
-            result = at.handle_torrentfile(os.path.join(current_path, torrent), dry_run)
-            if dry_run:
-                dry_run_data.append({
-                    'torrent': torrent,
-                    'found_bytes': result[0],
-                    'missing_bytes': result[1],
-                    'would_add': not result[2],
-                    'local_files': result[3],
-                })
-        
-        if dry_run:
-            if args.dry_run == 'json':
-                print(json.dumps(dry_run_data))
-            elif args.dry_run == 'txt':
-                for torrent in dry_run_data:
-                    print('Torrent: %s' % torrent['torrent'])
-                    print(' Found data: %s - Missing data: %s - Would add: %s' % (humanize_bytes(torrent['found_bytes']),
-                                                                                  humanize_bytes(torrent['missing_bytes']),
-                                                                                  torrent['would_add'] and 'Yes' or 'No'))
-                    print(' Local files used:')
-                    for f in torrent['local_files']:
-                        print('  %s' % f)
-                    print('')
+        addfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        print('Entering loop mode (%s)' % args.loopmode)
+        print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
+        at.populate_torrents_seeded()
+        print('(%i) seeded torrents in client' % len(at.torrents_seeded))
+        while 1 == 1:
+            time.sleep(1)
+
+def addfile(at, current_path, afiles, adry_run):
+    dry_run = bool(adry_run)
+    dry_run_data = []
+    print('Found %s torrent(s)' % len(afiles))
+    if not dry_run:
+        at.populate_torrents_seeded()
+
+    for torrent in afiles:
+        result = at.handle_torrentfile(os.path.join(current_path, torrent), dry_run)
+        if dry_run:
+            dry_run_data.append({
+                'torrent': torrent,
+                'found_bytes': result[0],
+                'missing_bytes': result[1],
+                'would_add': not result[2],
+                'local_files': result[3],
+            })
+
+    if dry_run:
+        if dry_run == 'json':
+            print(json.dumps(dry_run_data))
+        elif dry_run == 'txt':
+            for torrent in dry_run_data:
+                print('Torrent: %s' % torrent['torrent'])
+                print(' Found data: %s - Missing data: %s - Would add: %s' % (humanize_bytes(torrent['found_bytes']),
+                                                                              humanize_bytes(torrent['missing_bytes']),
+                                                                              torrent['would_add'] and 'Yes' or 'No'))
+                print(' Local files used:')
+                for f in torrent['local_files']:
+                    print('  %s' % f)
+                print('')
 
 if __name__ == '__main__':
     commandline_handler()

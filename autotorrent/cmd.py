@@ -209,9 +209,9 @@ def commandline_handler():
         addfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
         at.populate_torrents_seeded()
-        print('(%i) seeded torrents in client' % len(at.torrents_seeded))
+        print('There is currently %i seeded torrents in client' % len(at.torrents_seeded))
+        print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
         while 1 == 1:
             time.sleep(1)
 

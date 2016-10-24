@@ -47,15 +47,16 @@ def commandline_handler():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", dest="config_file", default="autotorrent.conf", help="Path to config file")
     parser.add_argument("-l", "--client", dest="client", default="default", help="Name of client to use (when multiple configured)")
+
     parser.add_argument("--create_config", dest="create_config_file", nargs='?', const='autotorrent.conf', default=None, help="Creates a new configuration file")
-    
     parser.add_argument("-t", "--test_connection", action="store_true", dest="test_connection", default=False, help='Tests the connection to the torrent client')
     parser.add_argument("--dry-run", nargs='?', const='txt', default=None, dest="dry_run", choices=['txt', 'json'], help="Don't do any actual adding, just scan for files needed for torrents.")
     parser.add_argument("-r", "--rebuild", dest="rebuild", default=False, help='Rebuild the database', nargs='*')
     parser.add_argument("-a", "--addfile", dest="addfile", default=False, help='Add a new torrent file to client', nargs='+')
     parser.add_argument("-d", "--delete_torrents", action="store_true", dest="delete_torrents", default=False, help='Delete torrents when they are added to the client')
     parser.add_argument("--verbose", help="increase output verbosity", action="store_true", dest="verbose")
-    
+    parser.add_argument("-o", action="store_true", dest="loopmode", help='Enable loop mode (scan directory for torrents every few seconds)', nargs='*')
+
     args = parser.parse_args()
     
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.ERROR)
@@ -201,7 +202,6 @@ def commandline_handler():
             db.rebuild()
             print('Database rebuilt')
 
-    
     if args.addfile:
         dry_run = bool(args.dry_run)
         dry_run_data = []
@@ -234,6 +234,9 @@ def commandline_handler():
                     for f in torrent['local_files']:
                         print('  %s' % f)
                     print('')
+
+    if args.loopmode:
+        print('Entering loop mode (%s)' % args.loopmode)
 
 if __name__ == '__main__':
     commandline_handler()

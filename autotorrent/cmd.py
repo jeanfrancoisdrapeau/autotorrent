@@ -55,7 +55,7 @@ def commandline_handler():
     parser.add_argument("-a", "--addfile", dest="addfile", default=False, help='Add a new torrent file to client', nargs='+')
     parser.add_argument("-d", "--delete_torrents", action="store_true", dest="delete_torrents", default=False, help='Delete torrents when they are added to the client')
     parser.add_argument("--verbose", help="increase output verbosity", action="store_true", dest="verbose")
-    parser.add_argument("-o", action="store_true", dest="loopmode", help='Enable loop mode (scan directory for torrents every few seconds)', nargs='*')
+    parser.add_argument("-o", "--loopmode", dest="loopmode", default=False, help='Enable loop mode (scan directory for torrents every few seconds)', nargs='*')
 
     args = parser.parse_args()
     

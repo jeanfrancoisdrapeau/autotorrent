@@ -116,6 +116,7 @@ class RTorrentClient(BaseClient):
         return set(x.lower() for x in self.proxy.download_list())
 
     def get_tname(self, thash):
+        print(thash)
         return self.proxy.d.get_name(thash)
 
     def get_complete(self, thash):

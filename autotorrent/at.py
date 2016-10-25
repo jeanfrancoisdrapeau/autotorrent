@@ -90,7 +90,7 @@ class AutoTorrent(object):
         """
         self.torrents_seeded_names = set()
         for x in self.client.get_torrents():
-            self.torrents_seeded_names.add([x, self.client.get_tname(x).lower()])
+            self.torrents_seeded_names.append([x, self.client.get_tname(x).lower()])
 
     def get_complete(self, thash):
         return self.client.get_complete(thash)

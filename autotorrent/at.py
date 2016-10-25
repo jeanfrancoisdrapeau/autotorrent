@@ -62,6 +62,7 @@ class AutoTorrent(object):
         self.delete_torrents = delete_torrents
         self.link_type = link_type
         self.torrents_seeded = set()
+        self.torrents_seeded_names = set()
 
     def try_decode(self, value):
         try:
@@ -82,6 +83,12 @@ class AutoTorrent(object):
         Fetches a list of currently-seeded info hashes
         """
         self.torrents_seeded = set(x.lower() for x in self.client.get_torrents())
+
+    def populate_torrents_seeded_names(self):
+        """
+        Fetches a list of currently-seeded info hashes
+        """
+        self.torrents_seeded_names = set(x.lower() for x in self.client.get_torrents_names())
 
     def get_info_hash(self, torrent):
         """

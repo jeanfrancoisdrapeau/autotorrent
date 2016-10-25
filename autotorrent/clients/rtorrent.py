@@ -120,7 +120,7 @@ class RTorrentClient(BaseClient):
         Returns a set of info names currently added to the client.
         """
         logger.info('Getting a list of torrent hashes')
-        return set(self.proxy.get_name(x.lower()) for x in self.proxy.download_list())
+        return set(self.proxy.get_name(x.lower()).lower() for x in self.proxy.download_list())
     
     def _get_mtime(self, path):
         return int(os.stat(path).st_mtime)

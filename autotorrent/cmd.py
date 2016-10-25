@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import time
+import re
 
 from six.moves import configparser, input
 
@@ -213,6 +214,19 @@ def commandline_handler():
         print('There is currently %i seeded torrents in client' % len(at.torrents_seeded))
         print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
         while 1 == 1:
+            for fn in os.listdir(args.loopmode):
+                if fn.endswith('.torrent'):
+                    fn_woext = os.path.splitext(fn)[0]
+                    fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
+                    print('!FOUND %s' % fn_woext)
+
+                    # Check if torrent exists
+                    if fn_scenename in at.torrents_seeded:
+                        # If exists, check if seeding
+                        print('!  this release is already in the client and is ?seeding?')
+                    # If seeding, add to cross-seed
+                    # If not exists, add new
+
             time.sleep(1)
 
 def addfile(at, current_path, afiles, adry_run):

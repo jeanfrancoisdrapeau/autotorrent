@@ -224,15 +224,23 @@ def commandline_handler():
                     print('There is currently %i seeded torrents in client' % len(at.torrents_seeded_names))
 
                     # Check if torrent exists
-                    print(at.torrents_seeded_names)
                     for thash, tname in at.torrents_seeded_names:
                         if tname == fn_scenename:
                             # If exists, check if seeding
                             seeding = at.get_complete(thash)
-                            print(seeding)
-                    # print('!  this release is already in the client and is ?seeding?')
-                    # If seeding, add to cross-seed
-                    # If not exists, add new
+                            print('!  this release is already in the client and is %s' % ("seeding" if seeding else
+                                                                                          "downloading"))
+                            # If seeding
+                            if seeding:
+                                # Add to cross-seed
+                                print("coss-seeding")
+                                # delete torrent file
+                                print("deleting file")
+                        else:
+                            # If not exists, add new
+                            print("adding new")
+                            # delete torrent file
+                            print("deleting file")
 
             time.sleep(5)
 

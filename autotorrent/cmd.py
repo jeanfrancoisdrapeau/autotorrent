@@ -212,8 +212,6 @@ def commandline_handler():
         addfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        at.populate_torrents_seeded_names()
-        print('There is currently %i seeded torrents in client' % len(at.torrents_seeded_names))
         print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
         while 1 == 1:
             for fn in os.listdir(args.loopmode):
@@ -221,6 +219,9 @@ def commandline_handler():
                     fn_woext = os.path.splitext(fn)[0]
                     fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
                     print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
+
+                    at.populate_torrents_seeded_names()
+                    print('There is currently %i seeded torrents in client' % len(at.torrents_seeded_names))
 
                     # Check if torrent exists
                     print(at.torrents_seeded_names)
@@ -233,7 +234,7 @@ def commandline_handler():
                     # If seeding, add to cross-seed
                     # If not exists, add new
 
-            time.sleep(1)
+            time.sleep(5)
 
 def addfile(at, current_path, afiles, adry_run):
     dry_run = bool(adry_run)

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import json
 import logging
@@ -219,11 +221,15 @@ def commandline_handler():
                     fn_woext = os.path.splitext(fn)[0]
                     fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
                     print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
-                    print(at.torrents_seeded_names)
+
                     # Check if torrent exists
-                    if fn_scenename in at.torrents_seeded_names:
-                        # If exists, check if seeding
-                        print('!  this release is already in the client and is ?seeding?')
+                    print(at.torrents_seeded_names)
+                    for thash, tname in at.torrents_seeded_names:
+                        if tname == fn_scenename:
+                            # If exists, check if seeding
+                            seeding = at.get_complete(thash)
+                            print(seeding)
+                    # print('!  this release is already in the client and is ?seeding?')
                     # If seeding, add to cross-seed
                     # If not exists, add new
 

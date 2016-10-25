@@ -86,9 +86,13 @@ class AutoTorrent(object):
 
     def populate_torrents_seeded_names(self):
         """
-        Fetches a list of currently-seeded info hashes
+        Fetches a list of currently-seeded info hashes and names
         """
-        self.torrents_seeded_names = set(x.lower() for x in self.client.get_torrents_names())
+        self.torrents_seeded_names = set([[self.client.proxy.d.get_name(y).lower() for y in x] for x in
+                                      self.client.proxy.download_list()])
+
+    def get_complete(self, thash):
+        return self.client.get_complete(thash)
 
     def get_info_hash(self, torrent):
         """

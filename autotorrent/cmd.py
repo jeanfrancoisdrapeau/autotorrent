@@ -218,8 +218,8 @@ def commandline_handler():
                 if fn.endswith('.torrent'):
                     fn_woext = os.path.splitext(fn)[0]
                     fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
-                    print('!FOUND %s' % fn_woext)
-
+                    print('!FOUND %s (%s)' % fn_woext, fn_scenename)
+                    print(at.torrents_seeded)
                     # Check if torrent exists
                     if fn_scenename in at.torrents_seeded:
                         # If exists, check if seeding

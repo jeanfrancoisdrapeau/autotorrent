@@ -235,6 +235,7 @@ def commandline_handler():
                             if seeding:
                                 # Add to cross-seed
                                 print('!  Adding torrent in cross-seed mode')
+                                print(args.addfile)
                                 addtfile(at, current_path, args.addfile, args.dry_run)
                                 # delete torrent file
                                 print('!  Deleting file')

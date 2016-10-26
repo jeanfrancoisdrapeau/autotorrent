@@ -291,7 +291,7 @@ def commandline_handler():
 
                             # delete torrent file
                             print("!  Deleting file")
-                            os.remove(os.path.join(current_path, fn))
+                            os.remove(os.path.join(args.loopmode, fn))
 
                             # rebuild files db
                             print('!  Adding new folders to database')

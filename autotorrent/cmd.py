@@ -7,6 +7,9 @@ import os
 import shutil
 import time
 import re
+import sys
+import select
+import termios
 
 from six.moves import configparser, input
 
@@ -14,6 +17,28 @@ from autotorrent.at import AutoTorrent
 from autotorrent.clients import TORRENT_CLIENTS
 from autotorrent.db import Database
 from autotorrent.humanize import humanize_bytes
+
+class KeyPoller():
+    def __enter__(self):
+        # Save the terminal settings
+        self.fd = sys.stdin.fileno()
+        self.new_term = termios.tcgetattr(self.fd)
+        self.old_term = termios.tcgetattr(self.fd)
+
+        # New terminal setting unbuffered
+        self.new_term[3] = (self.new_term[3] & ~termios.ICANON & ~termios.ECHO)
+        termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.new_term)
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
+
+    def poll(self):
+        dr,dw,de = select.select([sys.stdin], [], [], 0)
+        if not dr == []:
+            return sys.stdin.read(1)
+        return None
 
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via raw_input() and return their answer.
@@ -212,59 +237,64 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        print(config.get('general', 'store_path'))
-        print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
-        while 1 == 1:
-            for fn in os.listdir(args.loopmode):
-                if fn.endswith('.torrent'):
-                    fn_woext = os.path.splitext(fn)[0]
-                    fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
-                    print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
+        print('Entering loop mode (%s) (press X to exit)' % args.loopmode)
+        with KeyPoller() as keyPoller:
+            while True:
+                c = keyPoller.poll()
+                if not c is None:
+                    if c == "x":
+                        break
 
-                    at.populate_torrents_seeded_names()
-                    print('!  There is currently %i torrents in client' % len(at.torrents_seeded_names))
+                for fn in os.listdir(args.loopmode):
+                    if fn.endswith('.torrent'):
+                        fn_woext = os.path.splitext(fn)[0]
+                        fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
+                        print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
 
-                    # Check if torrent exists
-                    added = False
-                    for thash, tname in at.torrents_seeded_names:
-                        if tname == fn_scenename:
-                            # If exists, check if seeding
-                            seeding = at.get_complete(thash)
-                            print('!  This release is already in the client and is %s' % ("seeding" if seeding else
-                                                                                          "downloading"))
-                            # If seeding
-                            if seeding:
-                                # Add to cross-seed
-                                print('!  Adding torrent in cross-seed mode')
-                                addtfile(at, args.loopmode, [fn], args.dry_run)
+                        at.populate_torrents_seeded_names()
+                        print('!  There is currently %i torrents in client' % len(at.torrents_seeded_names))
 
-                                # delete torrent file
-                                print('!  Deleting file')
-                                os.remove(os.path.join(args.loopmode, fn))
+                        # Check if torrent exists
+                        added = False
+                        for thash, tname in at.torrents_seeded_names:
+                            if tname == fn_scenename:
+                                # If exists, check if seeding
+                                seeding = at.get_complete(thash)
+                                print('!  This release is already in the client and is %s' % ("seeding" if seeding else
+                                                                                              "downloading"))
+                                # If seeding
+                                if seeding:
+                                    # Add to cross-seed
+                                    print('!  Adding torrent in cross-seed mode')
+                                    addtfile(at, args.loopmode, [fn], args.dry_run)
 
-                                # rebuild files db
-                                print('!  Adding new folders to database')
-                                db.rebuild([config.get('general', 'store_path')])
-                                added = True
-                                break
-                            else:
-                                print('!  Skipping')
-                                break
-                    if not added:
-                        # If not exists, add new
-                        print("!  Adding torrent")
+                                    # delete torrent file
+                                    print('!  Deleting file')
+                                    os.remove(os.path.join(args.loopmode, fn))
 
-                        # delete torrent file
-                        print("!  Deleting file")
-                        os.remove(os.path.join(current_path, fn))
+                                    # rebuild files db
+                                    print('!  Adding new folders to database')
+                                    db.rebuild([config.get('general', 'store_path')])
+                                    added = True
+                                    break
+                                else:
+                                    print('!  Skipping')
+                                    break
+                        if not added:
+                            # If not exists, add new
+                            print("!  Adding torrent")
 
-                        # rebuild files db
-                        print('!  Adding new folders to database')
-                        db.rebuild([config.get('general', 'store_path')])
+                            # delete torrent file
+                            print("!  Deleting file")
+                            os.remove(os.path.join(current_path, fn))
 
-                    print('\n\nEntering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
+                            # rebuild files db
+                            print('!  Adding new folders to database')
+                            db.rebuild([config.get('general', 'store_path')])
 
-            time.sleep(5)
+                        print('\n\nEntering loop mode (%s) (press X to exit)' % args.loopmode)
+
+                time.sleep(5)
 
 def addtfile(at, current_path, afiles, adry_run):
     dry_run = bool(adry_run)

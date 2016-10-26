@@ -435,7 +435,7 @@ class AutoTorrent(object):
             if dry_run:
                 return "Dry run, added new torrent"
 
-            destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0])
+            destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0].replace(' ', '.'))
             if self.client.add_torrent(torrent, destination_path, files['files'], False):
                 self.print_status(Status.OK, path, 'New torrent added successfully')
                 return Status.OK

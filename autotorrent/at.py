@@ -39,10 +39,10 @@ class Status:
 
 status_messages = {
   Status.OK: '%sOK%s' % (COLOR_OK, Color.ENDC),
-  Status.MISSING_FILES: '%sMissing%s' % (COLOR_MISSING_FILES, Color.ENDC),
-  Status.ALREADY_SEEDING: '%sSeeded%s' % (COLOR_ALREADY_SEEDING, Color.ENDC),
-  Status.FOLDER_EXIST_NOT_SEEDING: '%sExists%s' % (COLOR_FOLDER_EXIST_NOT_SEEDING, Color.ENDC),
-  Status.FAILED_TO_ADD_TO_CLIENT: '%sFailed%s' % (COLOR_FAILED_TO_ADD_TO_CLIENT, Color.ENDC),
+  Status.MISSING_FILES: '%sMISSING%s' % (COLOR_MISSING_FILES, Color.ENDC),
+  Status.ALREADY_SEEDING: '%sSEEDED%s' % (COLOR_ALREADY_SEEDING, Color.ENDC),
+  Status.FOLDER_EXIST_NOT_SEEDING: '%sEXISTS%s' % (COLOR_FOLDER_EXIST_NOT_SEEDING, Color.ENDC),
+  Status.FAILED_TO_ADD_TO_CLIENT: '%sFAILED%s' % (COLOR_FAILED_TO_ADD_TO_CLIENT, Color.ENDC),
 }
 
 CHUNK_SIZE = 65536
@@ -514,4 +514,5 @@ class AutoTorrent(object):
             return bdecode(f.read())
 
     def print_status(self, status, torrentfile, message):
-        print(' %-20s %r %s' % ('[%s]' % status_messages[status], os.path.splitext(os.path.basename(torrentfile))[0], message))
+        print(' %-25s %r %s' % ('[%s]' % status_messages[status], os.path.splitext(os.path.basename(torrentfile))[0],
+                                message))

@@ -49,7 +49,7 @@ class Status:
 
 status_messages = {
     Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
-    Status.MONITOR: '%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+    Status.MONITOR: '\n%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
     Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
     Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
     Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),

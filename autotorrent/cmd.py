@@ -299,9 +299,11 @@ def commandline_handler():
                         at.populate_torrents_seeded_names()
 
                         # Check if torrent exists
-                        added = False
+                        found = False
                         for thash, tname in at.torrents_seeded_names:
                             if tname == fn_scenename:
+                                found = True
+
                                 # If exists, check if seeding
                                 seeding = at.get_complete(thash)
                                 if seeding:
@@ -322,12 +324,12 @@ def commandline_handler():
 
                                     # rebuild files db
                                     db.rebuild([config.get('general', 'store_path')])
-                                    added = True
                                     break
                                 else:
                                     print_status(Status.SKIP, fn_woext, 'Not processing')
                                     break
-                        if not added:
+
+                        if not found:
                             # If not exists, add new
                             print_status(Status.ADDNEW, fn_woext, 'Adding new torrent')
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)
@@ -377,7 +379,7 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
 
 
 def print_status(status, info, message):
-    print(' %-20s %r %s' % ('[%s]' % status_messages[status], info, message))
+    print(' %-25s %r %s' % ('[%s]' % status_messages[status], info, message))
 
 if __name__ == '__main__':
     commandline_handler()

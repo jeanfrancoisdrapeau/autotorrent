@@ -49,7 +49,7 @@ class Status:
 
 status_messages = {
     Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
-    Status.MONITOR: '\n%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+    Status.MONITOR: '%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
     Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
     Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
     Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
@@ -280,6 +280,7 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
+        print('')
         print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
         with KeyPoller() as keyPoller:
             while True:
@@ -340,6 +341,7 @@ def commandline_handler():
                             # rebuild files db
                             db.rebuild([config.get('general', 'store_path')])
 
+                        print('')
                         print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
 
                 time.sleep(5)

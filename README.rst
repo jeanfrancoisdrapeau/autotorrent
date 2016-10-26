@@ -1,5 +1,5 @@
-AutoTorrent
-===========
+AutoTorrent+MonitorMode
+=======================
 
 Given an input torrent, it will scan your collection for the files in
 the torrent. If all (or most) the files are found, a folder with links to all the
@@ -7,6 +7,9 @@ files will be created and the torrent added to the torrent client.
 
 All you need to do is download the torrents and AutoTorrent plays mix and match
 to make it possible to seed as much as possible across trackers.
+
+NEW: It is now possible to scan a folder indefinitely waiting for new torrent files
+(downloaded from autodl-irssi for example)
 
 Requirements
 ------------
@@ -19,53 +22,31 @@ Requirements
 Status
 ------
 
-Master branch
-~~~~~~~~~~~~~~    
-.. image:: https://coveralls.io/repos/github/JohnDoee/autotorrent/badge.svg?branch=master
-   :target: https://coveralls.io/github/JohnDoee/autotorrent?branch=master
-.. image:: https://travis-ci.org/JohnDoee/autotorrent.svg?branch=master
-   :target: https://travis-ci.org/JohnDoee/autotorrent
-
-
 Develop branch
 ~~~~~~~~~~~~~~
-.. image:: https://coveralls.io/repos/github/JohnDoee/autotorrent/badge.svg?branch=develop
-   :target: https://coveralls.io/github/JohnDoee/autotorrent?branch=develop 
-.. image:: https://travis-ci.org/JohnDoee/autotorrent.svg?branch=develop
-   :target: https://travis-ci.org/JohnDoee/autotorrent
+.. image:: https://travis-ci.org/jeanfrancoisdrapeau/autotorrent.svg?branch=develop
+   :target: https://travis-ci.org/jeanfrancoisdrapeau/autotorrent
 
 Install
 -------
 
-From PyPi (stable):
-::
-
-    virtualenv autotorrent-env
-    autotorrent-env/bin/pip install autotorrent
-
 From GitHub (develop):
 ::
 
-    virtualenv autotorrent-env
-    autotorrent-env/bin/pip install git+https://github.com/JohnDoee/autotorrent.git#develop
+    pip install git+https://github.com/jeanfrancoisdrapeau/autotorrent.git#develop
 
 Create the configuration file
 ::
 
-    autotorrent-env/bin/pip --create_config autotorrent-env/autotorrent.conf
+    autotorrent --create_config autotorrent-env/autotorrent.conf
 
 Upgrade from previous version
 -----------------------------
 
-Upgrading from PyPi (stable)
-::
-
-    autotorrent-env/bin/pip install --upgrade autotorrent
-
 Upgrading from Github (develop)
 ::
 
-    autotorrent-env/bin/pip install git+https://github.com/JohnDoee/autotorrent.git#develop --upgrade --force-reinstall
+    autotorrent-env/bin/pip install git+https://github.com/jeanfrancoisdrapeau/autotorrent.git#develop --upgrade --force-reinstall
 
 Configuration
 -------------
@@ -189,6 +170,11 @@ time.
 Step 2, have some torrents ready and run
 ``autotorrent -a folder/with/torrents/*.torrents``, this command will
 spit out how it went with adding the torrents.
+
+OR
+
+Step 2, let autotorrent scan indefinitely a folder for newly added torrent files
+``autotorrent -o folder/with/torrents/``
 
 And you're good to go.
 

@@ -32,14 +32,23 @@ class Color:
 
 COLOR_FOUND = Color.PINK
 COLOR_MONITOR = Color.CYAN
+COLOR_SEEDING = Color.GREEN
+COLOR_DOWNLOADING = Color.YELLOW
+COLOR_SKIP = Color.RED
 
 class Status:
     NEW_TORRENTFILE_FOUND = 0
     MONITOR = 1
+    SEEDING = 2
+    DOWNLOADING = 3
+    SKIP = 4
 
 status_messages = {
     Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
     Status.MONITOR: '%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+    Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
+    Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
+    Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
 }
 
 class KeyPoller():
@@ -279,10 +288,9 @@ def commandline_handler():
 
                         fn_woext = os.path.splitext(fn)[0]
                         fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
-                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent added successfully')
+                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
 
                         at.populate_torrents_seeded_names()
-                        print('!  There is currently %i torrents in client' % len(at.torrents_seeded_names))
 
                         # Check if torrent exists
                         added = False
@@ -290,8 +298,13 @@ def commandline_handler():
                             if tname == fn_scenename:
                                 # If exists, check if seeding
                                 seeding = at.get_complete(thash)
-                                print('!  This release is already in the client and is %s' % ("seeding" if seeding else
-                                                                                              "downloading"))
+                                if seeding:
+                                    print_status(Status.SEEDING, fn_woext,
+                                                 'This release is already in the client and is seeding')
+                                else:
+                                    print_status(Status.DOWNLOADING, fn_woext,
+                                                 'This release is already in the client and is downloading')
+
                                 # If seeding
                                 if seeding:
                                     # Add to cross-seed
@@ -308,7 +321,7 @@ def commandline_handler():
                                     added = True
                                     break
                                 else:
-                                    print('!  Skipping')
+                                    print_status(Status.SKIP, fn_woext, 'Not processing')
                                     break
                         if not added:
                             # If not exists, add new

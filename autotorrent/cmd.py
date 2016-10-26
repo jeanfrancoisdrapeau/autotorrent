@@ -234,22 +234,28 @@ def commandline_handler():
                             # If seeding
                             if seeding:
                                 # Add to cross-seed
-                                print("coss-seeding")
+                                print('!  Adding torrent in cross-seed mode')
+                                # addfile(at, current_path, args.addfile, args.dry_run)
                                 # delete torrent file
-                                print("deleting file")
+                                print('!  Deleting file')
+                                # os.remove(os.path.join(current_path, fn))
                                 added = True
+                            else:
+                                print('!  Skipping')
                     if not added:
                         # If not exists, add new
-                        print("adding new")
+                        print("!  Adding torrent")
+                        print('!  Adding new folders to database')
+                        db.rebuild(config.get('general', 'store_path'))
                         # delete torrent file
-                        print("deleting file")
+                        print("!  Deleting file")
+                        # os.remove(os.path.join(current_path, fn))
 
             time.sleep(5)
 
 def addfile(at, current_path, afiles, adry_run):
     dry_run = bool(adry_run)
     dry_run_data = []
-    print('Found %s torrent(s)' % len(afiles))
     if not dry_run:
         at.populate_torrents_seeded()
 

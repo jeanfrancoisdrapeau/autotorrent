@@ -37,6 +37,7 @@ COLOR_DOWNLOADING = Color.YELLOW
 COLOR_SKIP = Color.RED
 COLOR_ADDNEW = Color.GREEN
 COLOR_CROSS_SEED = Color.GREEN
+COLOR_NOTIRSSI = Color.RED
 
 class Status:
     NEW_TORRENTFILE_FOUND = 0
@@ -46,6 +47,7 @@ class Status:
     SKIP = 4
     ADDNEW = 5
     CROSS_SEED = 6
+    NOTIRSSI = 7
 
 status_messages = {
     Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
@@ -55,6 +57,7 @@ status_messages = {
     Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
     Status.ADDNEW: '%sADDNEW%s' % (COLOR_ADDNEW, Color.ENDC),
     Status.CROSS_SEED: '%sADDSEED%s' % (COLOR_CROSS_SEED, Color.ENDC),
+    Status.NOTIRSSI: '%NOTSCENE%s' % (COLOR_NOTIRSSI, Color.ENDC),
 }
 
 class KeyPoller():
@@ -112,8 +115,8 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 2016102601 ######')
-    print('# Original by John Doee https://github.com/JohnDoee/autotorrent')
+    print('###### autotorrent-1.6.2e1 build 20161026-02 ######')
+    print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
     parser = argparse.ArgumentParser()
@@ -281,22 +284,30 @@ def commandline_handler():
 
     if args.loopmode:
         print('')
-        print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
+        print_status(Status.MONITOR, args.loopmode, '(press \'x\' to exit)')
         with KeyPoller() as keyPoller:
             while True:
                 c = keyPoller.poll()
-                if not c is None:
+                if c is not None:
                     if c == "x":
                         break
 
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
-                        db.rebuild([config.get('general', 'store_path')])
-
                         fn_woext = os.path.splitext(fn)[0]
+
+                        isfromirssi = re.match('.*-.*-.*', fn_woext)
+                        if not isfromirssi:
+                            print_status(Status.NOTIRSSI, fn_woext, 'Not a scene file from autodl-irssi ('
+                                                                    'tracker-some.release-SOMEGROUP.torrent)')
+                            # delete torrent file
+                            os.remove(os.path.join(args.loopmode, fn))
+                            continue
+
                         fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
 
+                        db.rebuild([config.get('general', 'store_path')])
                         at.populate_torrents_seeded_names()
 
                         # Check if torrent exists
@@ -336,7 +347,7 @@ def commandline_handler():
                             os.remove(os.path.join(args.loopmode, fn))
 
                         print('')
-                        print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
+                        print_status(Status.MONITOR, args.loopmode, '(press \'x\' to exit)')
 
                 time.sleep(5)
 

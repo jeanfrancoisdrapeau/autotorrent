@@ -251,6 +251,8 @@ def commandline_handler():
 
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
+                        db.rebuild([config.get('general', 'store_path')])
+
                         fn_woext = os.path.splitext(fn)[0]
                         fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
                         print('!FOUND %s (%s)' % (fn_woext, fn_scenename))

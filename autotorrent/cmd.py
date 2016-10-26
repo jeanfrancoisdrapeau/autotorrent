@@ -38,8 +38,8 @@ class Status:
     MONITOR = 1
 
 status_messages = {
-    Status.NEW_TORRENTFILE_FOUND: '%FOUND%s' % (COLOR_FOUND, Color.ENDC),
-    Status.MONITOR: '%MONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+    Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
+    Status.MONITOR: '%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
 }
 
 class KeyPoller():

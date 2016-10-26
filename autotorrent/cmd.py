@@ -331,4 +331,7 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
                 print('')
 
 if __name__ == '__main__':
+    print('###### autotorrent-1.6.2e1 ######')
+    print('# Original by John Doee https://github.com/JohnDoee/autotorrent')
+    print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
     commandline_handler()

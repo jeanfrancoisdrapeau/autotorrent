@@ -112,7 +112,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 ######')
+    print('###### autotorrent-1.6.2e1 build 2016102601 ######')
     print('# Original by John Doee https://github.com/JohnDoee/autotorrent')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -322,9 +322,6 @@ def commandline_handler():
 
                                     # delete torrent file
                                     os.remove(os.path.join(args.loopmode, fn))
-
-                                    # rebuild files db
-                                    db.rebuild([config.get('general', 'store_path')])
                                     break
                                 else:
                                     print_status(Status.SKIP, fn_woext, 'Not processing')
@@ -337,9 +334,6 @@ def commandline_handler():
 
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
-
-                            # rebuild files db
-                            db.rebuild([config.get('general', 'store_path')])
 
                         print('')
                         print_status(Status.MONITOR, args.loopmode, '(press X to exit)')

@@ -18,6 +18,30 @@ from autotorrent.clients import TORRENT_CLIENTS
 from autotorrent.db import Database
 from autotorrent.humanize import humanize_bytes
 
+
+class Color:
+    BLACK = '\033[90m'
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    PINK = '\033[95m'
+    CYAN = '\033[96m'
+    WHITE = '\033[97m'
+    ENDC = '\033[0m'
+
+COLOR_FOUND = Color.Pink
+COLOR_MONITOR = Color.CYAN
+
+class Status:
+    NEW_TORRENTFILE_FOUND = 0
+    MONITOR = 1
+
+status_messages = {
+    Status.NEW_TORRENTFILE_FOUND: '%FOUND%s' % (COLOR_FOUND, Color.ENDC),
+    Status.MONITOR: '%MONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+}
+
 class KeyPoller():
     def __enter__(self):
         # Save the terminal settings
@@ -241,7 +265,7 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        print('Monitoring %s (press X to exit)' % args.loopmode)
+        print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
         with KeyPoller() as keyPoller:
             while True:
                 c = keyPoller.poll()
@@ -255,7 +279,7 @@ def commandline_handler():
 
                         fn_woext = os.path.splitext(fn)[0]
                         fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
-                        print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
+                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent added successfully')
 
                         at.populate_torrents_seeded_names()
                         print('!  There is currently %i torrents in client' % len(at.torrents_seeded_names))
@@ -299,7 +323,7 @@ def commandline_handler():
                             print('!  Adding new folders to database')
                             db.rebuild([config.get('general', 'store_path')])
 
-                        print('\nMonitoring %s (press X to exit)' % args.loopmode)
+                        print_status(Status.MONITOR, args.loopmode, '(press X to exit)')
 
                 time.sleep(5)
 
@@ -335,6 +359,10 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
                 for f in torrent['local_files']:
                     print('  %s' % f)
                 print('')
+
+
+def print_status(status, torrentfile, message):
+    print(' %-20s %r %s' % ('[%s]' % status_messages[status], os.path.splitext(os.path.basename(torrentfile))[0], message))
 
 if __name__ == '__main__':
     commandline_handler()

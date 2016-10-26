@@ -361,8 +361,8 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
                 print('')
 
 
-def print_status(status, torrentfile, message):
-    print(' %-20s %r %s' % ('[%s]' % status_messages[status], os.path.splitext(os.path.basename(torrentfile))[0], message))
+def print_status(status, info, message):
+    print(' %-20s %r %s' % ('[%s]' % status_messages[status], info, message))
 
 if __name__ == '__main__':
     commandline_handler()

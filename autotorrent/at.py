@@ -421,7 +421,7 @@ class AutoTorrent(object):
                             bytes_written += read_bytes
                 logger.debug('Done rewriting file')
     
-    def handle_torrentfile(self, path, dry_run=False):
+    def handle_torrentfile(self, path, dry_run=False, is_new=False):
         """
         Checks a torrentfile for files to seed, groups them by found / not found.
         The result will also include the total size of missing / not missing files.
@@ -429,57 +429,70 @@ class AutoTorrent(object):
         logger.info('Handling file %s' % path)
 
         torrent = self.open_torrentfile(path)
+        found_size, missing_size, files = self.parse_torrent(torrent)
 
-        if self.check_torrent_in_client(torrent):
-            self.print_status(Status.ALREADY_SEEDING, path, 'Already seeded')
+        if is_new:
+            if dry_run:
+                return "Dry run, added new torrent"
+
+            destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0])
+            if self.client.add_torrent(torrent, destination_path, files['files'], False):
+                self.print_status(Status.OK, path, 'New torrent added successfully')
+                return Status.OK
+            else:
+                self.print_status(Status.FAILED_TO_ADD_TO_CLIENT, path, 'Failed to send new torrent to client')
+                return Status.FAILED_TO_ADD_TO_CLIENT
+        else:
+            if self.check_torrent_in_client(torrent):
+                self.print_status(Status.ALREADY_SEEDING, path, 'Already seeded')
+                if self.delete_torrents:
+                    logger.info('Removing torrent %r' % path)
+                    os.remove(path)
+                return Status.ALREADY_SEEDING
+
+            found_size, missing_size, files = self.parse_torrent(torrent)
+            missing_percent = (missing_size / (found_size + missing_size)) * 100
+            found_percent = 100 - missing_percent
+            would_not_add = missing_size and missing_percent > self.add_limit_percent or missing_size > self.add_limit_size
+
+            if dry_run:
+                return found_size, missing_size, would_not_add, [f['actual_path'] for f in files['files'] if f.get('actual_path')]
+
+            if would_not_add:
+                logger.info('Files missing from %s, only %3.2f%% found (%s missing)' % (path, found_percent, humanize_bytes(missing_size)))
+                self.print_status(Status.MISSING_FILES, path, 'Missing files, only %3.2f%% found (%s missing)' % (found_percent, humanize_bytes(missing_size)))
+                return Status.MISSING_FILES
+
+            if files['mode'] == 'link' or files['mode'] == 'hash':
+                logger.info('Preparing torrent using link mode')
+                destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0])
+
+                if os.path.isdir(destination_path):
+                    logger.info('Folder exist but torrent is not seeded %s' % destination_path)
+                    self.print_status(Status.FOLDER_EXIST_NOT_SEEDING, path, 'The folder exist, but is not seeded by torrentclient')
+                    return Status.FOLDER_EXIST_NOT_SEEDING
+
+                self.link_files(destination_path, files['files'])
+            elif files['mode'] == 'exact':
+                logger.info('Preparing torrent using exact mode')
+                destination_path = files['source_path']
+
+            fast_resume = True
+            if files['mode'] == 'hash':
+                fast_resume = False
+                logger.info('There are files found using hashing that needs rewriting.')
+                self.rewrite_hashed_files(destination_path, files['files'])
+
             if self.delete_torrents:
                 logger.info('Removing torrent %r' % path)
                 os.remove(path)
-            return Status.ALREADY_SEEDING
 
-        found_size, missing_size, files = self.parse_torrent(torrent)
-        missing_percent = (missing_size / (found_size + missing_size)) * 100
-        found_percent = 100 - missing_percent
-        would_not_add = missing_size and missing_percent > self.add_limit_percent or missing_size > self.add_limit_size
-        
-        if dry_run:
-            return found_size, missing_size, would_not_add, [f['actual_path'] for f in files['files'] if f.get('actual_path')]
-        
-        if would_not_add:
-            logger.info('Files missing from %s, only %3.2f%% found (%s missing)' % (path, found_percent, humanize_bytes(missing_size)))
-            self.print_status(Status.MISSING_FILES, path, 'Missing files, only %3.2f%% found (%s missing)' % (found_percent, humanize_bytes(missing_size)))
-            return Status.MISSING_FILES
-        
-        if files['mode'] == 'link' or files['mode'] == 'hash':
-            logger.info('Preparing torrent using link mode')
-            destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0])
-            
-            if os.path.isdir(destination_path):
-                logger.info('Folder exist but torrent is not seeded %s' % destination_path)
-                self.print_status(Status.FOLDER_EXIST_NOT_SEEDING, path, 'The folder exist, but is not seeded by torrentclient')
-                return Status.FOLDER_EXIST_NOT_SEEDING
-    
-            self.link_files(destination_path, files['files'])
-        elif files['mode'] == 'exact':
-            logger.info('Preparing torrent using exact mode')
-            destination_path = files['source_path']
-        
-        fast_resume = True
-        if files['mode'] == 'hash':
-            fast_resume = False
-            logger.info('There are files found using hashing that needs rewriting.')
-            self.rewrite_hashed_files(destination_path, files['files'])
-
-        if self.delete_torrents:
-            logger.info('Removing torrent %r' % path)
-            os.remove(path)
-        
-        if self.client.add_torrent(torrent, destination_path, files['files'], fast_resume):
-            self.print_status(Status.OK, path, 'Torrent added successfully')
-            return Status.OK
-        else:
-            self.print_status(Status.FAILED_TO_ADD_TO_CLIENT, path, 'Failed to send torrent to client')
-            return Status.FAILED_TO_ADD_TO_CLIENT
+            if self.client.add_torrent(torrent, destination_path, files['files'], fast_resume):
+                self.print_status(Status.OK, path, 'Torrent added successfully')
+                return Status.OK
+            else:
+                self.print_status(Status.FAILED_TO_ADD_TO_CLIENT, path, 'Failed to send torrent to client')
+                return Status.FAILED_TO_ADD_TO_CLIENT
     
     def check_torrent_in_client(self, torrent):
         """

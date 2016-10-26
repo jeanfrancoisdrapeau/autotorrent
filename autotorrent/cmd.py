@@ -237,7 +237,7 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
-        print('Entering loop mode (%s) (press X to exit)' % args.loopmode)
+        print('Monitoring %s (press X to exit)' % args.loopmode)
         with KeyPoller() as keyPoller:
             while True:
                 c = keyPoller.poll()
@@ -283,6 +283,7 @@ def commandline_handler():
                         if not added:
                             # If not exists, add new
                             print("!  Adding torrent")
+                            addtfile(at, args.loopmode, [fn], args.dry_run, True)
 
                             # delete torrent file
                             print("!  Deleting file")
@@ -292,18 +293,20 @@ def commandline_handler():
                             print('!  Adding new folders to database')
                             db.rebuild([config.get('general', 'store_path')])
 
-                        print('\n\nEntering loop mode (%s) (press X to exit)' % args.loopmode)
+                        print('\nMonitoring %s (press X to exit)' % args.loopmode)
 
                 time.sleep(5)
 
-def addtfile(at, current_path, afiles, adry_run):
+    print('Goodbye!')
+
+def addtfile(at, current_path, afiles, adry_run, is_new):
     dry_run = bool(adry_run)
     dry_run_data = []
     if not dry_run:
         at.populate_torrents_seeded()
 
     for torrent in afiles:
-        result = at.handle_torrentfile(os.path.join(current_path, torrent), dry_run)
+        result = at.handle_torrentfile(os.path.join(current_path, torrent), dry_run, is_new)
         if dry_run:
             dry_run_data.append({
                 'torrent': torrent,

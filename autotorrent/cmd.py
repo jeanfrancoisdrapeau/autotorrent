@@ -209,7 +209,7 @@ def commandline_handler():
             print('Database rebuilt')
 
     if args.addfile:
-        addfile(at, current_path, args.addfile, args.dry_run)
+        addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
         print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
@@ -235,11 +235,12 @@ def commandline_handler():
                             if seeding:
                                 # Add to cross-seed
                                 print('!  Adding torrent in cross-seed mode')
-                                print(args.addfile)
-                                addtfile(at, current_path, args.addfile, args.dry_run)
+                                print(current_path)
+                                print(os.path.join(args.loopmode, fn))
+                                # addtfile(at, current_path, os.path.join(args.loopmode, fn), args.dry_run)
                                 # delete torrent file
                                 print('!  Deleting file')
-                                os.remove(os.path.join(current_path, fn))
+                                # os.remove(os.path.join(current_path, fn))
                                 added = True
                             else:
                                 print('!  Skipping')

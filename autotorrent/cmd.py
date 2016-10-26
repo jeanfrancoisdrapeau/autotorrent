@@ -73,6 +73,10 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
+    print('###### autotorrent-1.6.2e1 ######')
+    print('# Original by John Doee https://github.com/JohnDoee/autotorrent')
+    print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", dest="config_file", default="autotorrent.conf", help="Path to config file")
     parser.add_argument("-l", "--client", dest="client", default="default", help="Name of client to use (when multiple configured)")
@@ -331,8 +335,4 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
                 print('')
 
 if __name__ == '__main__':
-    dsdssdds
-    print('###### autotorrent-1.6.2e1 ######')
-    print('# Original by John Doee https://github.com/JohnDoee/autotorrent')
-    print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
     commandline_handler()

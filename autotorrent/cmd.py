@@ -242,8 +242,10 @@ def commandline_handler():
                                 os.remove(os.path.join(args.loopmode, fn))
                                 db.rebuild([config.get('general', 'store_path')])
                                 added = True
+                                break
                             else:
                                 print('!  Skipping')
+                                break
                     if not added:
                         # If not exists, add new
                         print("!  Adding torrent")

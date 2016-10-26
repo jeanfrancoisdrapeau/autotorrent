@@ -30,7 +30,7 @@ class Color:
     WHITE = '\033[97m'
     ENDC = '\033[0m'
 
-COLOR_FOUND = Color.Pink
+COLOR_FOUND = Color.PINK
 COLOR_MONITOR = Color.CYAN
 
 class Status:

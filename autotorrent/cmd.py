@@ -35,6 +35,8 @@ COLOR_MONITOR = Color.CYAN
 COLOR_SEEDING = Color.GREEN
 COLOR_DOWNLOADING = Color.YELLOW
 COLOR_SKIP = Color.RED
+COLOR_ADDNEW = Color.GREEN
+COLOR_CROSS_SEED = Color.GREEN
 
 class Status:
     NEW_TORRENTFILE_FOUND = 0
@@ -42,6 +44,8 @@ class Status:
     SEEDING = 2
     DOWNLOADING = 3
     SKIP = 4
+    ADDNEW = 5
+    CROSS_SEED = 6
 
 status_messages = {
     Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
@@ -49,6 +53,8 @@ status_messages = {
     Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
     Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
     Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
+    Status.ADDNEW: '%sADDNEW%s' % (COLOR_ADDNEW, Color.ENDC),
+    Status.CROSS_SEED: '%sADDSEED%s' % (COLOR_CROSS_SEED, Color.ENDC),
 }
 
 class KeyPoller():
@@ -308,15 +314,13 @@ def commandline_handler():
                                 # If seeding
                                 if seeding:
                                     # Add to cross-seed
-                                    print('!  Adding torrent in cross-seed mode')
+                                    print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
                                     addtfile(at, args.loopmode, [fn], args.dry_run, False)
 
                                     # delete torrent file
-                                    print('!  Deleting file')
                                     os.remove(os.path.join(args.loopmode, fn))
 
                                     # rebuild files db
-                                    print('!  Adding new folders to database')
                                     db.rebuild([config.get('general', 'store_path')])
                                     added = True
                                     break
@@ -325,15 +329,13 @@ def commandline_handler():
                                     break
                         if not added:
                             # If not exists, add new
-                            print("!  Adding torrent")
+                            print_status(Status.ADDNEW, fn_woext, 'Adding new torrent')
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)
 
                             # delete torrent file
-                            print("!  Deleting file")
                             os.remove(os.path.join(args.loopmode, fn))
 
                             # rebuild files db
-                            print('!  Adding new folders to database')
                             db.rebuild([config.get('general', 'store_path')])
 
                         print_status(Status.MONITOR, args.loopmode, '(press X to exit)')

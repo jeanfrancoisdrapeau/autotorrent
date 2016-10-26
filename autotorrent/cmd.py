@@ -222,7 +222,7 @@ def commandline_handler():
                     print('!FOUND %s (%s)' % (fn_woext, fn_scenename))
 
                     at.populate_torrents_seeded_names()
-                    print('!  There is currently %i seeded torrents in client' % len(at.torrents_seeded_names))
+                    print('!  There is currently %i torrents in client' % len(at.torrents_seeded_names))
 
                     # Check if torrent exists
                     added = False
@@ -262,7 +262,7 @@ def commandline_handler():
                         print('!  Adding new folders to database')
                         db.rebuild([config.get('general', 'store_path')])
 
-                    print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
+                    print('\n\nEntering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
 
             time.sleep(5)
 

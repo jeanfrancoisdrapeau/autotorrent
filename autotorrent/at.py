@@ -3,6 +3,7 @@ from __future__ import division, unicode_literals
 import os
 import hashlib
 import logging
+import re
 
 from collections import defaultdict
 
@@ -435,7 +436,9 @@ class AutoTorrent(object):
             if dry_run:
                 return "Dry run, added new torrent"
 
-            destination_path = os.path.join(self.store_path, os.path.splitext(os.path.basename(path))[0].replace(' ', '.'))
+            fn = os.path.splitext(os.path.basename(path))[0].replace(' ', '.')
+            fn2 = re.search('-(.*)$', fn).group(1).replace(' ', '.').lower()
+            destination_path = os.path.join(self.store_path, fn2)
             if not os.path.exists(destination_path):
                 os.makedirs(destination_path)
             if self.client.add_torrent(torrent, destination_path, files['files'], False):

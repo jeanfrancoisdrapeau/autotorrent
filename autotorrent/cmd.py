@@ -235,7 +235,7 @@ def commandline_handler():
                             if seeding:
                                 # Add to cross-seed
                                 print('!  Adding torrent in cross-seed mode')
-                                addfile(at, current_path, args.addfile, args.dry_run)
+                                addtfile(at, current_path, args.addfile, args.dry_run)
                                 # delete torrent file
                                 print('!  Deleting file')
                                 os.remove(os.path.join(current_path, fn))
@@ -253,7 +253,7 @@ def commandline_handler():
 
             time.sleep(5)
 
-def addfile(at, current_path, afiles, adry_run):
+def addtfile(at, current_path, afiles, adry_run):
     dry_run = bool(adry_run)
     dry_run_data = []
     if not dry_run:

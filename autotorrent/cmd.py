@@ -212,6 +212,7 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
+        print(config.get('general', 'store_path'))
         print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
         while 1 == 1:
             for fn in os.listdir(args.loopmode):
@@ -255,8 +256,6 @@ def commandline_handler():
             time.sleep(5)
 
 def addtfile(at, current_path, afiles, adry_run):
-    print(current_path)
-    print(afiles)
     dry_run = bool(adry_run)
     dry_run_data = []
     if not dry_run:

@@ -254,6 +254,8 @@ def commandline_handler():
             time.sleep(5)
 
 def addtfile(at, current_path, afiles, adry_run):
+    print(current_path)
+    print(afiles)
     dry_run = bool(adry_run)
     dry_run_data = []
     if not dry_run:

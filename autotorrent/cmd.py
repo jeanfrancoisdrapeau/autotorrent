@@ -237,9 +237,13 @@ def commandline_handler():
                                 # Add to cross-seed
                                 print('!  Adding torrent in cross-seed mode')
                                 addtfile(at, args.loopmode, [fn], args.dry_run)
+
                                 # delete torrent file
                                 print('!  Deleting file')
                                 os.remove(os.path.join(args.loopmode, fn))
+
+                                # rebuild files db
+                                print('!  Adding new folders to database')
                                 db.rebuild([config.get('general', 'store_path')])
                                 added = True
                                 break
@@ -249,11 +253,16 @@ def commandline_handler():
                     if not added:
                         # If not exists, add new
                         print("!  Adding torrent")
-                        print('!  Adding new folders to database')
-                        db.rebuild([config.get('general', 'store_path')])
+
                         # delete torrent file
                         print("!  Deleting file")
-                        # os.remove(os.path.join(current_path, fn))
+                        os.remove(os.path.join(current_path, fn))
+
+                        # rebuild files db
+                        print('!  Adding new folders to database')
+                        db.rebuild([config.get('general', 'store_path')])
+
+                    print('Entering loop mode (%s) (ctrl-c to exit)' % args.loopmode)
 
             time.sleep(5)
 

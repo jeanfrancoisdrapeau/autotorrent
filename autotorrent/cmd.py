@@ -239,8 +239,8 @@ def commandline_handler():
                                 addtfile(at, args.loopmode, [fn], args.dry_run)
                                 # delete torrent file
                                 print('!  Deleting file')
-                                # os.remove(os.path.join(args.loopmode, fn))
-                                db.rebuild(config.get('general', 'store_path'))
+                                os.remove(os.path.join(args.loopmode, fn))
+                                db.rebuild([config.get('general', 'store_path')])
                                 added = True
                             else:
                                 print('!  Skipping')
@@ -248,7 +248,7 @@ def commandline_handler():
                         # If not exists, add new
                         print("!  Adding torrent")
                         print('!  Adding new folders to database')
-                        db.rebuild(config.get('general', 'store_path'))
+                        db.rebuild([config.get('general', 'store_path')])
                         # delete torrent file
                         print("!  Deleting file")
                         # os.remove(os.path.join(current_path, fn))

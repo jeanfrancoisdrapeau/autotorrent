@@ -11,6 +11,8 @@ import sys
 import select
 import termios
 
+from datetime import datetime
+
 from six.moves import configparser, input
 
 from autotorrent.at import AutoTorrent
@@ -385,7 +387,8 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
 
 
 def print_status(status, info, message):
-    print(' %-25s %r %s' % ('[%s]' % status_messages[status], info, message))
+    print('%s %-25s %r %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '[%s]' % status_messages[status], info,
+                              message))
 
 if __name__ == '__main__':
     commandline_handler()

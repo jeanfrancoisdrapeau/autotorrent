@@ -5,6 +5,7 @@ import hashlib
 import logging
 import re
 
+from datetime import datetime
 from collections import defaultdict
 
 from .bencode import bencode, bdecode
@@ -514,5 +515,5 @@ class AutoTorrent(object):
             return bdecode(f.read())
 
     def print_status(self, status, torrentfile, message):
-        print(' %-25s %r %s' % ('[%s]' % status_messages[status], os.path.splitext(os.path.basename(torrentfile))[0],
-                                message))
+        print('%s %-25s %r %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '[%s]' % status_messages[status],
+                                  os.path.splitext(os.path.basename(torrentfile))[0], message))

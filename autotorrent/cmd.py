@@ -14,6 +14,7 @@ import termios
 from datetime import datetime
 from six.moves import configparser, input
 
+from autotorrent.waitingfiles import WaitingFiles
 from autotorrent.at import AutoTorrent
 from autotorrent.clients import TORRENT_CLIENTS
 from autotorrent.db import Database
@@ -116,7 +117,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161026-05 ######')
+    print('###### autotorrent-1.6.2e1 build 20161026-06 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -284,6 +285,8 @@ def commandline_handler():
         addtfile(at, current_path, args.addfile, args.dry_run)
 
     if args.loopmode:
+        wf = WaitingFiles()
+
         print('')
         print_status(Status.MONITOR, args.loopmode, '(press \'x\' to exit)')
         with KeyPoller() as keyPoller:
@@ -292,6 +295,34 @@ def commandline_handler():
                 if c is not None:
                     if c == "x":
                         break
+
+                # Check for waiting files, add them if download is complete
+                tempwf = []
+                while len(wf.waitingfiles) > 0:
+                    oneitem = wf.getone()
+
+                    at.populate_torrents_seeded_names()
+                    fn = os.path.basename(oneitem[0])
+                    fn_woext = os.path.splitext(fn)[0]
+                    fn_scenename = oneitem[1]
+
+                    for thash, tname in at.torrents_seeded_names:
+                        if tname == fn_scenename:
+
+                            # Check if seeding
+                            seeding = at.get_complete(thash)
+
+                            # If seeding
+                            if seeding:
+                                # Add to cross-seed
+                                print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
+                                addtfile(at, args.loopmode, [fn], args.dry_run, False)
+
+                                break
+                            else:
+                                tempwf.append(oneitem)
+
+                wf.waitingfiles = tempwf
 
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
@@ -335,7 +366,11 @@ def commandline_handler():
                                     os.remove(os.path.join(args.loopmode, fn))
                                     break
                                 else:
-                                    print_status(Status.SKIP, fn_woext, 'Not processing')
+                                    print_status(Status.SKIP, fn_woext, 'Adding to wait list')
+                                    wf.insert(os.path.join(args.loopmode, fn), fn_scenename)
+
+                                    # delete torrent file
+                                    os.remove(os.path.join(args.loopmode, fn))
                                     break
 
                         if not found:
@@ -349,7 +384,7 @@ def commandline_handler():
                         print('')
                         print_status(Status.MONITOR, args.loopmode, '(press \'x\' to exit)')
 
-                time.sleep(5)
+                time.sleep(1)
 
     print('Goodbye!')
 

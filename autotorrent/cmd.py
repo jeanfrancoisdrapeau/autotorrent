@@ -117,7 +117,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161027-01 ######')
+    print('###### autotorrent-1.6.2e1 build 20161027-02 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -369,7 +369,16 @@ def commandline_handler():
                                     break
                                 else:
                                     print_status(Status.SKIP, fn_woext, 'Adding to wait list')
-                                    wf.insert(os.path.join(args.loopmode, fn), fn_scenename_ori)
+
+                                    # move file to staging folder
+                                    orifile = os.path.join(args.loopmode, fn)
+                                    stagingfolder = os.path.join(args.loopmode, "wait")
+                                    if not os.path.exists(stagingfolder):
+                                        os.mkdir(stagingfolder)
+                                    destfile = os.path.join(stagingfolder, fn)
+                                    os.rename(orifile, destfile)
+
+                                    wf.insert(destfile, fn_scenename_ori)
 
                                     # delete torrent file
                                     os.remove(os.path.join(args.loopmode, fn))

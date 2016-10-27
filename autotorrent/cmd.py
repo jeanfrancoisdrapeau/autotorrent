@@ -115,7 +115,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161026-03 ######')
+    print('###### autotorrent-1.6.2e1 build 20161026-04 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -295,6 +295,8 @@ def commandline_handler():
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
                         fn_woext = os.path.splitext(fn)[0]
+                        fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
+                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
 
                         isfromirssi = re.match('.*-.*-.*', fn_woext)
                         if not isfromirssi:
@@ -303,9 +305,6 @@ def commandline_handler():
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
                             continue
-
-                        fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
-                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
 
                         db.rebuild([config.get('general', 'store_path')])
                         at.populate_torrents_seeded_names()

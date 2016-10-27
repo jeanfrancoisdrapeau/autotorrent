@@ -37,7 +37,6 @@ COLOR_MONITOR = Color.CYAN
 COLOR_SEEDING = Color.GREEN
 COLOR_DOWNLOADING = Color.YELLOW
 COLOR_SKIP = Color.RED
-COLOR_ADDNEW = Color.GREEN
 COLOR_CROSS_SEED = Color.GREEN
 COLOR_NOTIRSSI = Color.RED
 
@@ -47,7 +46,6 @@ class Status:
     SEEDING = 2
     DOWNLOADING = 3
     SKIP = 4
-    ADDNEW = 5
     CROSS_SEED = 6
     NOTIRSSI = 7
 
@@ -57,7 +55,6 @@ status_messages = {
     Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
     Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
     Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
-    Status.ADDNEW: '%sADDNEW%s' % (COLOR_ADDNEW, Color.ENDC),
     Status.CROSS_SEED: '%sADDSEED%s' % (COLOR_CROSS_SEED, Color.ENDC),
     Status.NOTIRSSI: '%sNOTSCENE%s' % (COLOR_NOTIRSSI, Color.ENDC),
 }
@@ -117,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161027-02 ######')
+    print('###### autotorrent-1.6.2e1 build 20161027-03 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -386,7 +383,6 @@ def commandline_handler():
 
                         if not found:
                             # If not exists, add new
-                            print_status(Status.ADDNEW, fn_woext, 'Adding new torrent')
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)
 
                             # delete torrent file

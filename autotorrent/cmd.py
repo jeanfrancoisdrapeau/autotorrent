@@ -117,7 +117,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161026-06 ######')
+    print('###### autotorrent-1.6.2e1 build 20161027-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -304,7 +304,8 @@ def commandline_handler():
                     at.populate_torrents_seeded_names()
                     fn = os.path.basename(oneitem[0])
                     fn_woext = os.path.splitext(fn)[0]
-                    fn_scenename = oneitem[1]
+                    fn_scenename_ori = oneitem[1]
+                    fn_scenename = fn_scenename_ori.lower()
 
                     for thash, tname in at.torrents_seeded_names:
                         if tname == fn_scenename:
@@ -327,7 +328,8 @@ def commandline_handler():
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
                         fn_woext = os.path.splitext(fn)[0]
-                        fn_scenename = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.').lower()
+                        fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
+                        fn_scenename = fn_scenename_ori.lower()
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
 
                         isfromirssi = re.match('.*-.*-.*', fn_woext)
@@ -367,7 +369,7 @@ def commandline_handler():
                                     break
                                 else:
                                     print_status(Status.SKIP, fn_woext, 'Adding to wait list')
-                                    wf.insert(os.path.join(args.loopmode, fn), fn_scenename)
+                                    wf.insert(os.path.join(args.loopmode, fn), fn_scenename_ori)
 
                                     # delete torrent file
                                     os.remove(os.path.join(args.loopmode, fn))

@@ -438,7 +438,7 @@ class AutoTorrent(object):
                 return "Dry run, added new torrent"
 
             fn = os.path.splitext(os.path.basename(path))[0].replace(' ', '.')
-            fn2 = re.search('-(.*)$', fn).group(1).replace(' ', '.').lower()
+            fn2 = re.search('-(.*)$', fn).group(1).replace(' ', '.')
             destination_path = os.path.join(self.store_path, fn2)
             if not os.path.exists(destination_path):
                 os.makedirs(destination_path)

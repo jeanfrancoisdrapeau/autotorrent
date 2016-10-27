@@ -317,10 +317,10 @@ def commandline_handler():
                                 # Add to cross-seed
                                 print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
                                 addtfile(at, args.loopmode, [fn], args.dry_run, False)
-
                                 break
                             else:
                                 tempwf.append(oneitem)
+                                break
 
                 wf.waitingfiles = tempwf
 

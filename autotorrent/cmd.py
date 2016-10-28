@@ -388,7 +388,7 @@ def commandline_handler():
 
                         print('')
                         print_status(Status.MONITOR, args.loopmode,
-                                     ', %i in wait list (press \'x\' to exit)' % len(wf.waitingfiles))
+                                     '[%i in wait list] (press \'x\' to exit)' % len(wf.waitingfiles))
 
                 time.sleep(1)
 

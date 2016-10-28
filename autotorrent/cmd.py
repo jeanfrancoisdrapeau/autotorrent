@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161027-03 ######')
+    print('###### autotorrent-1.6.2e1 build 20161028-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -376,9 +376,6 @@ def commandline_handler():
                                     os.rename(orifile, destfile)
 
                                     wf.insert(destfile, fn_scenename_ori)
-
-                                    # delete torrent file
-                                    os.remove(os.path.join(args.loopmode, fn))
                                     break
 
                         if not found:

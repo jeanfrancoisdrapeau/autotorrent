@@ -314,7 +314,8 @@ def commandline_handler():
                             if seeding:
                                 # Add to cross-seed
                                 print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
-                                addtfile(at, args.loopmode, [fn], args.dry_run, False)
+                                addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
+                                os.remove(os.path.join(os.path.join(args.loopmode, 'wait'), fn))
                                 break
                             else:
                                 tempwf.append(oneitem)

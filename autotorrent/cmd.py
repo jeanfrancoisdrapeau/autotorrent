@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161028-03 ######')
+    print('###### autotorrent-1.6.2e1 build 20161029-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -285,7 +285,7 @@ def commandline_handler():
         wf = WaitingFiles()
 
         print('')
-        print_status(Status.MONITOR, args.loopmode, '(press \'x\' to exit)')
+        print_status(Status.MONITOR, args.loopmode, '[0 in wait list] (press \'x\' to exit)')
         with KeyPoller() as keyPoller:
             while True:
                 c = keyPoller.poll()

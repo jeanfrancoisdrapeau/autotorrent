@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161030-02 ######')
+    print('###### autotorrent-1.6.2e1 build 20161030-03 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -300,8 +300,8 @@ def commandline_handler():
 
                 # Check for waiting files, add them if download is complete
                 tempwf = []
-                found_seed = False
                 while len(wf.waitingfiles) > 0:
+                    found_seed = False
                     oneitem = wf.getone()
 
                     at.populate_torrents_seeded_names()

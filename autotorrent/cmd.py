@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161029-01 ######')
+    print('###### autotorrent-1.6.2e1 build 20161029-02 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -283,11 +283,16 @@ def commandline_handler():
 
     if args.loopmode:
         wf = WaitingFiles()
+        show_monitor = True
 
-        print('')
-        print_status(Status.MONITOR, args.loopmode, '[0 in wait list] (press \'x\' to exit)')
         with KeyPoller() as keyPoller:
             while True:
+                if show_monitor:
+                    print('')
+                    print_status(Status.MONITOR, args.loopmode,
+                                 '[%i in wait list] (press \'x\' to exit)' % len(wf.waitingfiles))
+                    show_monitor = False
+
                 c = keyPoller.poll()
                 if c is not None:
                     if c == "x":
@@ -325,6 +330,8 @@ def commandline_handler():
 
                 for fn in os.listdir(args.loopmode):
                     if fn.endswith('.torrent'):
+                        show_monitor = True
+
                         fn_woext = os.path.splitext(fn)[0]
                         fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
                         fn_scenename = fn_scenename_ori.lower()
@@ -385,10 +392,6 @@ def commandline_handler():
 
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
-
-                        print('')
-                        print_status(Status.MONITOR, args.loopmode,
-                                     '[%i in wait list] (press \'x\' to exit)' % len(wf.waitingfiles))
 
                 time.sleep(1)
 

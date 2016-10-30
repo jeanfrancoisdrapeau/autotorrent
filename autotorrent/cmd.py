@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161029-02 ######')
+    print('###### autotorrent-1.6.2e1 build 20161030-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -318,6 +318,7 @@ def commandline_handler():
                             # If seeding
                             if seeding:
                                 # Add to cross-seed
+                                db.rebuild([config.get('general', 'store_path')])
                                 print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
                                 addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
                                 os.remove(os.path.join(os.path.join(args.loopmode, 'wait'), fn))

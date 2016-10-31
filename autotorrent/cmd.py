@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161030-04 ######')
+    print('###### autotorrent-1.6.2e1 build 20161030-05 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -290,7 +290,7 @@ def commandline_handler():
                 if show_monitor:
                     print('')
                     print_status(Status.MONITOR, args.loopmode,
-                                 '[%i in wait list] (press \'x\' to exit)' % len(wf.waitingfiles))
+                                 '[%i in wait list] (press \'x\' to exit)' % len(wf.waitingfiles), current_path)
                     show_monitor = False
 
                 c = keyPoller.poll()
@@ -325,7 +325,7 @@ def commandline_handler():
                         # Add to cross-seed
                         show_monitor = True
                         db.rebuild([config.get('general', 'store_path')])
-                        print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
+                        print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode', current_path)
                         addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
                         os.remove(os.path.join(os.path.join(args.loopmode, 'wait'), fn))
                     else:
@@ -340,12 +340,13 @@ def commandline_handler():
                         fn_woext = os.path.splitext(fn)[0]
                         fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
                         fn_scenename = fn_scenename_ori.lower()
-                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found')
+                        print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found', current_path)
 
                         isfromirssi = re.match('.*-.*-.*', fn_woext)
                         if not isfromirssi:
                             print_status(Status.NOTIRSSI, fn_woext, 'Not a scene file from autodl-irssi ('
-                                                                    'tracker-some.release-SOMEGROUP.torrent)')
+                                                                    'tracker-some.release-SOMEGROUP.torrent)',
+                                         current_path)
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
                             continue
@@ -363,22 +364,24 @@ def commandline_handler():
                                 seeding = at.get_complete(thash)
                                 if seeding:
                                     print_status(Status.SEEDING, fn_woext,
-                                                 'This release is already in the client and is seeding')
+                                                 'This release is already in the client and is seeding', current_path)
                                 else:
                                     print_status(Status.DOWNLOADING, fn_woext,
-                                                 'This release is already in the client and is downloading')
+                                                 'This release is already in the client and is downloading',
+                                                 current_path)
 
                                 # If seeding
                                 if seeding:
                                     # Add to cross-seed
-                                    print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode')
+                                    print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
+                                                 current_path)
                                     addtfile(at, args.loopmode, [fn], args.dry_run, False)
 
                                     # delete torrent file
                                     os.remove(os.path.join(args.loopmode, fn))
                                     break
                                 else:
-                                    print_status(Status.SKIP, fn_woext, 'Adding to wait list')
+                                    print_status(Status.SKIP, fn_woext, 'Adding to wait list', current_path)
 
                                     # move file to staging folder
                                     orifile = os.path.join(args.loopmode, fn)
@@ -434,9 +437,14 @@ def addtfile(at, current_path, afiles, adry_run, is_new):
                 print('')
 
 
-def print_status(status, info, message):
-    print('%s %-25s %r %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '[%s]' % status_messages[status], info,
-                              message))
+def print_status(status, info, message, current_path):
+    m = '%s %-25s %r %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '[%s]' % status_messages[status], info,
+                              message)
+    print(m)
+
+    f = open(os.path.join(current_path, 'autotorrent.log'), 'a')
+    f.write(m + '\n')
+    f.close()
 
 if __name__ == '__main__':
     commandline_handler()

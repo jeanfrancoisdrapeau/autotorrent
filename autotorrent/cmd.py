@@ -50,12 +50,12 @@ class Status:
     NOTIRSSI = 7
 
 status_messages = {
-    Status.NEW_TORRENTFILE_FOUND: '%sFOUND%s' % (COLOR_FOUND, Color.ENDC),
-    Status.MONITOR: '%sMONITOR%s' % (COLOR_MONITOR, Color.ENDC),
+    Status.NEW_TORRENTFILE_FOUND: '%sNEW%s' % (COLOR_FOUND, Color.ENDC),
+    Status.MONITOR: '%sMONITORING%s' % (COLOR_MONITOR, Color.ENDC),
     Status.SEEDING: '%sSEEDING%s' % (COLOR_SEEDING, Color.ENDC),
     Status.DOWNLOADING: '%sDOWNLOADING%s' % (COLOR_DOWNLOADING, Color.ENDC),
-    Status.SKIP: '%sSKIPPING%s' % (COLOR_DOWNLOADING, Color.ENDC),
-    Status.CROSS_SEED: '%sADDSEED%s' % (COLOR_CROSS_SEED, Color.ENDC),
+    Status.SKIP: '%sWAITING%s' % (COLOR_DOWNLOADING, Color.ENDC),
+    Status.CROSS_SEED: '%sCROSS-SEED%s' % (COLOR_CROSS_SEED, Color.ENDC),
     Status.NOTIRSSI: '%sNOTSCENE%s' % (COLOR_NOTIRSSI, Color.ENDC),
 }
 
@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161030-03 ######')
+    print('###### autotorrent-1.6.2e1 build 20161030-04 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 

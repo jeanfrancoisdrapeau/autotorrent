@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161030-05 ######')
+    print('###### autotorrent-1.6.2e1 build 20161031-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -324,8 +324,8 @@ def commandline_handler():
                     if found_seed:
                         # Add to cross-seed
                         show_monitor = True
-                        db.rebuild([config.get('general', 'store_path')])
                         print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode', current_path)
+                        db.rebuild([config.get('general', 'store_path')])
                         addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
                         os.remove(os.path.join(os.path.join(args.loopmode, 'wait'), fn))
                     else:
@@ -351,7 +351,6 @@ def commandline_handler():
                             os.remove(os.path.join(args.loopmode, fn))
                             continue
 
-                        db.rebuild([config.get('general', 'store_path')])
                         at.populate_torrents_seeded_names()
 
                         # Check if torrent exists
@@ -375,6 +374,7 @@ def commandline_handler():
                                     # Add to cross-seed
                                     print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
                                                  current_path)
+                                    db.rebuild([config.get('general', 'store_path')])
                                     addtfile(at, args.loopmode, [fn], args.dry_run, False)
 
                                     # delete torrent file

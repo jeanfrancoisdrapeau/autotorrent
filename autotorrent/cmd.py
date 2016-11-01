@@ -372,6 +372,7 @@ def commandline_handler():
                                 # If exists, check if seeding
                                 if at.get_complete(thash):
                                     found_seed = True
+                                    break
 
                         # If seeding
                         if found & found_seed:
@@ -383,7 +384,6 @@ def commandline_handler():
 
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
-                            break
                         elif found:
                             print_status(Status.SKIP, fn_woext, 'Adding to wait list', current_path)
 
@@ -396,7 +396,6 @@ def commandline_handler():
                             os.rename(orifile, destfile)
 
                             wf.insert(destfile, fn_scenename_ori)
-                            break
                         else:
                             # If not exists, add new
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)

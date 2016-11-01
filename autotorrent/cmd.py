@@ -340,12 +340,11 @@ def commandline_handler():
                         torrent = at.open_torrentfile(os.path.join(args.loopmode, fn))
                         torrent_name = torrent[b'info'][b'name']
 
-                        # fn_woext = os.path.splitext(fn)[0]
+                        fn_woext = os.path.splitext(fn)[0]
                         # fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
                         # fn_scenename = fn_scenename_ori.lower()
 
                         fn_scenename_ori = torrent_name
-                        fn_woext = fn_scenename_ori
                         fn_scenename = fn_scenename_ori.lower()
 
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found', current_path)

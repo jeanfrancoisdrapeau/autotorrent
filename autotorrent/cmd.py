@@ -306,8 +306,8 @@ def commandline_handler():
 
                     at.populate_torrents_seeded_names()
                     fn = os.path.basename(oneitem[0])
-                    fn_woext = os.path.splitext(fn)[0]
                     fn_scenename_ori = oneitem[1]
+                    fn_woext = fn_scenename_ori
                     fn_scenename = fn_scenename_ori.lower()
 
                     for thash, tname in at.torrents_seeded_names:
@@ -345,6 +345,7 @@ def commandline_handler():
                         # fn_scenename = fn_scenename_ori.lower()
 
                         fn_scenename_ori = torrent_name
+                        fn_woext = fn_scenename_ori
                         fn_scenename = fn_scenename_ori.lower()
 
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found', current_path)

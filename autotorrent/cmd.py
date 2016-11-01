@@ -350,16 +350,6 @@ def commandline_handler():
 
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found', current_path)
 
-                        """isfromirssi = re.match('.*-.*-.*', fn_woext)
-                        if not isfromirssi:
-                            print_status(Status.NOTIRSSI, fn_woext, 'Not a scene file from autodl-irssi ('
-                                                                    'tracker-some.release-SOMEGROUP.torrent)',
-                                         current_path)
-                            # delete torrent file
-                            os.remove(os.path.join(args.loopmode, fn))
-                            continue
-                        """
-
                         at.populate_torrents_seeded_names()
 
                         # Check if torrent exists
@@ -376,15 +366,15 @@ def commandline_handler():
 
                         # If seeding
                         if found & found_seed:
-                            # Add to cross-seed
+                            # Found and seeding
                             print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
                                          current_path)
                             db.rebuild([config.get('general', 'store_path')])
                             addtfile(at, args.loopmode, [fn], args.dry_run, False)
 
-                            # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
                         elif found:
+                            # Found but downloading
                             print_status(Status.SKIP, fn_woext, 'Adding to wait list', current_path)
 
                             # move file to staging folder
@@ -397,10 +387,9 @@ def commandline_handler():
 
                             wf.insert(destfile, fn_scenename_ori)
                         else:
-                            # If not exists, add new
+                            # Not found, add new
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)
 
-                            # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
 
                 time.sleep(1)

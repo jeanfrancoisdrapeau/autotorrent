@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161101-02 ######')
+    print('###### autotorrent-1.6.2e1 build 20161101-03 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -364,46 +364,40 @@ def commandline_handler():
 
                         # Check if torrent exists
                         found = False
+                        found_seed = False
                         for thash, tname in at.torrents_seeded_names:
                             if tname == fn_scenename:
                                 found = True
 
                                 # If exists, check if seeding
-                                seeding = at.get_complete(thash)
-                                if seeding:
-                                    print_status(Status.SEEDING, fn_woext,
-                                                 'This release is already in the client and is seeding', current_path)
-                                else:
-                                    print_status(Status.DOWNLOADING, fn_woext,
-                                                 'This release is already in the client and is downloading',
-                                                 current_path)
+                                if at.get_complete(thash):
+                                    found_seed = True
 
-                                # If seeding
-                                if seeding:
-                                    # Add to cross-seed
-                                    print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
-                                                 current_path)
-                                    db.rebuild([config.get('general', 'store_path')])
-                                    addtfile(at, args.loopmode, [fn], args.dry_run, False)
+                        # If seeding
+                        if found & found_seed:
+                            # Add to cross-seed
+                            print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
+                                         current_path)
+                            db.rebuild([config.get('general', 'store_path')])
+                            addtfile(at, args.loopmode, [fn], args.dry_run, False)
 
-                                    # delete torrent file
-                                    os.remove(os.path.join(args.loopmode, fn))
-                                    break
-                                else:
-                                    print_status(Status.SKIP, fn_woext, 'Adding to wait list', current_path)
+                            # delete torrent file
+                            os.remove(os.path.join(args.loopmode, fn))
+                            break
+                        elif found:
+                            print_status(Status.SKIP, fn_woext, 'Adding to wait list', current_path)
 
-                                    # move file to staging folder
-                                    orifile = os.path.join(args.loopmode, fn)
-                                    stagingfolder = os.path.join(args.loopmode, "wait")
-                                    if not os.path.exists(stagingfolder):
-                                        os.mkdir(stagingfolder)
-                                    destfile = os.path.join(stagingfolder, fn)
-                                    os.rename(orifile, destfile)
+                            # move file to staging folder
+                            orifile = os.path.join(args.loopmode, fn)
+                            stagingfolder = os.path.join(args.loopmode, "wait")
+                            if not os.path.exists(stagingfolder):
+                                os.mkdir(stagingfolder)
+                            destfile = os.path.join(stagingfolder, fn)
+                            os.rename(orifile, destfile)
 
-                                    wf.insert(destfile, fn_scenename_ori)
-                                    break
-
-                        if not found:
+                            wf.insert(destfile, fn_scenename_ori)
+                            break
+                        else:
                             # If not exists, add new
                             addtfile(at, args.loopmode, [fn], args.dry_run, True)
 

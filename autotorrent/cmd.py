@@ -433,9 +433,10 @@ def print_status(status, info, message, current_path):
                               message)
     print(m)
 
-    f = open(os.path.join(current_path, 'autotorrent.log'), 'a')
-    f.write(m + '\n')
-    f.close()
+    if status != Status.MONITOR:
+        f = open(os.path.join(current_path, 'autotorrent.log'), 'a')
+        f.write(m + '\n')
+        f.close()
 
 if __name__ == '__main__':
     commandline_handler()

@@ -306,8 +306,9 @@ def commandline_handler():
 
                     at.populate_torrents_seeded_names()
                     fn = os.path.basename(oneitem[0])
+                    fn_woext = os.path.splitext(fn)[0]
+
                     fn_scenename_ori = oneitem[1]
-                    fn_woext = fn_scenename_ori
                     fn_scenename = fn_scenename_ori.lower()
 
                     for thash, tname in at.torrents_seeded_names:

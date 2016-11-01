@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161031-01 ######')
+    print('###### autotorrent-1.6.2e1 build 20161101-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -337,12 +337,19 @@ def commandline_handler():
                     if fn.endswith('.torrent'):
                         show_monitor = True
 
-                        fn_woext = os.path.splitext(fn)[0]
-                        fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
+                        at.open_torrentfile(os.path.join(args.loopmode, fn))
+                        torrent_name = torrent[b'info'][b'name']
+
+                        # fn_woext = os.path.splitext(fn)[0]
+                        # fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
+                        # fn_scenename = fn_scenename_ori.lower()
+
+                        fn_scenename_ori = torrent_name
                         fn_scenename = fn_scenename_ori.lower()
+
                         print_status(Status.NEW_TORRENTFILE_FOUND, fn_woext, 'New torrent file found', current_path)
 
-                        isfromirssi = re.match('.*-.*-.*', fn_woext)
+                        """isfromirssi = re.match('.*-.*-.*', fn_woext)
                         if not isfromirssi:
                             print_status(Status.NOTIRSSI, fn_woext, 'Not a scene file from autodl-irssi ('
                                                                     'tracker-some.release-SOMEGROUP.torrent)',
@@ -350,6 +357,7 @@ def commandline_handler():
                             # delete torrent file
                             os.remove(os.path.join(args.loopmode, fn))
                             continue
+                        """
 
                         at.populate_torrents_seeded_names()
 

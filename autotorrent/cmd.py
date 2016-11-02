@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161101-03 ######')
+    print('###### autotorrent-1.6.2e1 build 20161102-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -285,6 +285,10 @@ def commandline_handler():
         wf = WaitingFiles()
         show_monitor = True
 
+        rep = {".": "_", " ": "_"}  # define desired replacements here
+        rep = dict((re.escape(k), v) for k, v in rep.iteritems())
+        pattern = re.compile("|".join(rep.keys()))
+
         with KeyPoller() as keyPoller:
             while True:
                 if show_monitor:
@@ -312,6 +316,7 @@ def commandline_handler():
                     fn_scenename = fn_scenename_ori.lower()
 
                     for thash, tname in at.torrents_seeded_names:
+                        tname = pattern.sub(lambda m: rep[re.escape(m.group(0))], tname)
                         if tname == fn_scenename:
 
                             # Check if seeding
@@ -341,6 +346,9 @@ def commandline_handler():
                         torrent = at.open_torrentfile(os.path.join(args.loopmode, fn))
                         torrent_name = torrent[b'info'][b'name']
 
+                        # Replace dots and spaces with underscore
+                        torrent_name = pattern.sub(lambda m: rep[re.escape(m.group(0))], torrent_name)
+
                         fn_woext = os.path.splitext(fn)[0]
                         # fn_scenename_ori = re.search('-(.*)$', fn_woext).group(1).replace(' ', '.')
                         # fn_scenename = fn_scenename_ori.lower()
@@ -356,6 +364,7 @@ def commandline_handler():
                         found = False
                         found_seed = False
                         for thash, tname in at.torrents_seeded_names:
+                            tname = pattern.sub(lambda m: rep[re.escape(m.group(0))], tname)
                             if tname == fn_scenename:
                                 found = True
 

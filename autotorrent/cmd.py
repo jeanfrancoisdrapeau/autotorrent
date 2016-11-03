@@ -114,7 +114,7 @@ def query_yes_no(question, default="yes"):
         
 
 def commandline_handler():
-    print('###### autotorrent-1.6.2e1 build 20161102-01 ######')
+    print('###### autotorrent-1.6.2e1 build 20161103-01 ######')
     print('# Original code by John Doee https://github.com/JohnDoee/autotorrent (thanks!)')
     print('# Monitoring mode added by Jean-Francois Drapeau https://github.com/jeanfrancoisdrapeau/autotorrent')
 
@@ -330,6 +330,7 @@ def commandline_handler():
                     if found_seed:
                         # Add to cross-seed
                         show_monitor = True
+                        print_status(Status.CROSS_SEED, fn_scenename_ori, 'Is now seeding', current_path)
                         print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode', current_path)
                         db.rebuild([config.get('general', 'store_path')])
                         addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
@@ -376,6 +377,7 @@ def commandline_handler():
                         # If seeding
                         if found & found_seed:
                             # Found and seeding
+                            print_status(Status.CROSS_SEED, fn_scenename_ori, 'Is now seeding', current_path)
                             print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
                                          current_path)
                             db.rebuild([config.get('general', 'store_path')])

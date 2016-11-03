@@ -330,7 +330,6 @@ def commandline_handler():
                     if found_seed:
                         # Add to cross-seed
                         show_monitor = True
-                        print_status(Status.CROSS_SEED, fn_scenename_ori, 'Is now seeding', current_path)
                         print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode', current_path)
                         db.rebuild([config.get('general', 'store_path')])
                         addtfile(at, os.path.join(args.loopmode, 'wait'), [fn], args.dry_run, False)
@@ -377,7 +376,6 @@ def commandline_handler():
                         # If seeding
                         if found & found_seed:
                             # Found and seeding
-                            print_status(Status.CROSS_SEED, fn_scenename_ori, 'Is now seeding', current_path)
                             print_status(Status.CROSS_SEED, fn_woext, 'Adding torrent in cross-seed mode',
                                          current_path)
                             db.rebuild([config.get('general', 'store_path')])

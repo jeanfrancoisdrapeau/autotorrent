@@ -116,7 +116,6 @@ class DelugeClient(BaseClient):
     def get_tname(self, thash):
         self._login()
         result = self.rpcclient.call('core.get_torrents_status', {}, ['name'])
-        print(result)
         if thash in result:
             r1 = result.get(thash, 'name')
             r2 = r1.get('name')

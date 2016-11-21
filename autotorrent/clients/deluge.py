@@ -110,9 +110,16 @@ class DelugeClient(BaseClient):
         """
         logger.info('Getting a list of torrent hashes')
         self._login()
-        result = self.rpcclient.call('core.get_torrents_status', {}, ['name'])
+        result = self.rpcclient.call('core.get_torrents_status', {}, ['hash'])
         return set(x.lower().decode('ascii') for x in result.keys())
-    
+
+    def get_tname(self, thash):
+        self._login()
+        result = self.rpcclient.call('core.get_torrents_status', {}, ['name', 'hash'])
+        for rname, rhash in result:
+            if rhash.lower().decode('ascii') == thash:
+                return rname
+
     def add_torrent(self, torrent, destination_path, files, fast_resume=True):
         """
         Add a new torrent to Deluge.

@@ -121,6 +121,14 @@ class DelugeClient(BaseClient):
             r2 = r1.get('name')
             return r2
 
+    def get_complete(self, thash):
+        self._login()
+        result = self.rpcclient.call('core.get_torrents_status', {}, ['is_seed'])
+        if thash in result:
+            r1 = result.get(thash, 'is_seed')
+            r2 = r1.get('is_seed')
+            return r2
+
     def add_torrent(self, torrent, destination_path, files, fast_resume=True):
         """
         Add a new torrent to Deluge.

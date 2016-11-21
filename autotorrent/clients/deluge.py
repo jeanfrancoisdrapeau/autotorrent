@@ -118,7 +118,8 @@ class DelugeClient(BaseClient):
         result = self.rpcclient.call('core.get_torrents_status', {}, ['name'])
         print(result)
         if thash in result:
-            return result.get(thash, result.get('name'))
+            print(result.get(thash, 'name'))
+            return result.get(thash, 'name')
 
     def add_torrent(self, torrent, destination_path, files, fast_resume=True):
         """

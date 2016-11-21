@@ -110,12 +110,12 @@ class DelugeClient(BaseClient):
         """
         logger.info('Getting a list of torrent hashes')
         self._login()
-        result = self.rpcclient.call('core.get_torrents_status', {}, ['hash'])
+        result = self.rpcclient.call('core.get_torrents_status', {}, ['name'])
         return set(x.lower().decode('ascii') for x in result.keys())
 
     def get_tname(self, thash):
         self._login()
-        result = self.rpcclient.call('core.get_torrents_status', {}, ['name', 'hash'])
+        result = self.rpcclient.call('core.get_torrents_status', {}, ['name'])
         print(result)
         for rname, rhash in result:
             if rhash.lower().decode('ascii') == thash:

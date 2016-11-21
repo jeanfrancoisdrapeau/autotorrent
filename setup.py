@@ -21,7 +21,6 @@ setup(
     maintainer='John Doee',
     url='https://github.com/JohnDoee/autotorrent',
     packages=['autotorrent', 'autotorrent.clients'],
-    install_requires=['six', 'deluge-client', 'requests'],
     license='MIT',
     package_data={'autotorrent': ['autotorrent.conf.dist']},
     classifiers=[

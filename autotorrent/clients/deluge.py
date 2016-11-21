@@ -120,8 +120,7 @@ class DelugeClient(BaseClient):
         if thash in result:
             r1 = result.get(thash, 'name')
             r2 = r1.get('name')
-            print(r2)
-            return result.get(thash, 'name')
+            return r2
 
     def add_torrent(self, torrent, destination_path, files, fast_resume=True):
         """

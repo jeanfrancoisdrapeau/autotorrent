@@ -89,11 +89,10 @@ class Database(object):
                     key = self.keyify(size, normalized_filename)
                 
                 if key in self.db: # check if same file
-                    if os.path.exists(self.db[key]):
-                        old_inode = os.stat(self.db[key]).st_ino
-                        new_inode = os.stat(path).st_ino
-                        if old_inode != new_inode:
-                            logger.warning('Duplicate key %s and %s' % (path, self.db[key]))
+                    old_inode = os.stat(self.db[key]).st_ino
+                    new_inode = os.stat(path).st_ino
+                    if old_inode != new_inode:
+                        logger.warning('Duplicate key %s and %s' % (path, self.db[key]))
     
                 self.db[key] = path
     
